@@ -62,17 +62,18 @@ exports.Login = async (req, res) => {
 
 exports.addBook = async (req, res) => {
   try {
-    const { title, author, status } = req.body;
+    const { title, author, status,image } = req.body;
 
    
-    if (!title || !author) {
+    if (!title || !author ||!image) {
       return res.status(400).json({ message: "Title and author are required" });
     }
 
     const book = await Book.create({
       title,
       author,
-      status
+      status,
+      image
     });
 
     res.status(201).json({
