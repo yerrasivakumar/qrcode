@@ -109,17 +109,28 @@ exports.addBook = async (req, res) => {
 exports.getBooks = async (req, res) => {
   try {
 
+
     const search = req.query.search || ""
   let filter = {}
     if(search){
  filter.title = { $regex:search,$options:"i"}
 }
-    const books = await Book.find(filter).sort({createdAt:-1})
-    // const books = await Book.find(filter).select("-createdAt -updatedAt")
 
+const page = parseInt(req.query.page) || 1;
+const limit = parseInt(req.query.limit) || 5;
+
+  const skip = (page -1) * limit
+
+    const books = await Book.find(filter).sort({createdAt:-1}).skip(skip).limit(limit)
+    // const books = await Book.find(filter).select("-createdAt -updatedAt")
+   const total = await Book.countDocuments(filter);
     res.status(200).json({
       count: books.length,
-      books
+      books,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+     
     });
 
   } catch (error) {
