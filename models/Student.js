@@ -1,7 +1,7 @@
 
 const mongoose = require("mongoose");
 
-const BookSchema = new mongoose.Schema({
+const StundentSchema = new mongoose.Schema({
     Stundentname: {
     type: String,
     required: true
@@ -12,6 +12,6 @@ const BookSchema = new mongoose.Schema({
   },
  
 
-});
+},{ timestamps: true,versionKey: false});
 
-module.exports = mongoose.model("Student", BookSchema);
+module.exports = mongoose.model("Student", StundentSchema);

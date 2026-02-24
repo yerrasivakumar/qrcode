@@ -14,8 +14,11 @@ const BookSchema = new mongoose.Schema({
     type: String,
     required: true
   },
- 
- status:{type:String, default:"available"}
-});
+  stock: {
+    type: Number,
+    default: 0
+  },
+  status:{type:String, default:"available"}
+}, { timestamps: true , versionKey: false});
 
 module.exports = mongoose.model("Book", BookSchema);
