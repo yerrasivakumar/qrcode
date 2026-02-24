@@ -109,12 +109,13 @@ exports.addBook = async (req, res) => {
 exports.getBooks = async (req, res) => {
   try {
 
-    const search = req.query.search
+    const search = req.query.search || ""
   let filter = {}
     if(search){
  filter.title = { $regex:search,$options:"i"}
 }
-    const books = await Book.find(filter).select("-createdAt -updatedAt")
+    const books = await Book.find(filter).sort({createdAt:-1})
+    // const books = await Book.find(filter).select("-createdAt -updatedAt")
 
     res.status(200).json({
       count: books.length,
