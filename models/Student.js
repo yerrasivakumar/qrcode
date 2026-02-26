@@ -2,11 +2,11 @@
 const mongoose = require("mongoose");
 
 const StundentSchema = new mongoose.Schema({
-    Stundentname: {
+    name: {
     type: String,
     required: true
   },
-    Password: {
+    password: {
     type: String,
     required: true
   },
