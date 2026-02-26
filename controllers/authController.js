@@ -175,10 +175,12 @@ exports.addStudent = async (req, res) => {
 
 exports.getStudents = async (req, res) => { 
   try {
-    const stundent = await Stundent.find().select("-password");
+    const students = await Stundent.find().select("-Password");
 
     res.status(200).json({
-      stundent
+      success: true,
+      count: students.length,
+      data: students
     });
 
   } catch (error) {
