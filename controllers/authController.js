@@ -143,16 +143,23 @@ const limit = parseInt(req.query.limit) || 5;
 
 exports.addStudent = async (req, res) => {
   try {
-    const { Stundentname, Department } = req.body;
+    const { Stundentname, Department,Password,PhoneNumber,Email } = req.body;
 
-   
-    if (!Stundentname || !Department) {
-      return res.status(400).json({ message: "Stundentname and Department are required" });
+      const ph = await Stundent.findOne({ PhoneNumber })
+      if (ph) {
+  return res.status(400).json({
+    success: false,
+    message: "PhoneNumber already exists"
+  });
+}
+    if (!Stundentname || !Department || !Password ||!PhoneNumber) {
+      return res.status(400).json({ message: "Stundentname and Department and password and PhoneNumber are required" });
     }
-
+ 
     const student = await Stundent.create({
       Stundentname,
-      Department
+      Department,
+      Password,PhoneNumber,Email
     });
 
     res.status(201).json({
@@ -168,7 +175,7 @@ exports.addStudent = async (req, res) => {
 
 exports.getStudents = async (req, res) => { 
   try {
-    const stundent = await Stundent.find();
+    const stundent = await Stundent.find().select("-password");
 
     res.status(200).json({
       stundent

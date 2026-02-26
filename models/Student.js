@@ -6,7 +6,19 @@ const StundentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+    Password: {
+    type: String,
+    required: true
+  },
   Department: {
+    type: String,
+    required: true
+  },
+  PhoneNumber: {
+    type: String,
+    required: true
+  },
+    Email: {
     type: String,
     required: true
   },
