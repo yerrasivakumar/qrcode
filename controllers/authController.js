@@ -281,12 +281,7 @@ exports.getUserWithHistory = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    // ✅ validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({
-        message: "Invalid user ID"
-      });
-    }
+   
 
     // ✅ get user (remove __v)
     const user = await Stundent.findById(userId).select("-__v");
