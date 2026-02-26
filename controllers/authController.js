@@ -153,7 +153,7 @@ exports.addStudent = async (req, res) => {
   });
 }
     if (!Stundentname || !Department || !Password ||!PhoneNumber) {
-      return res.status(400).json({ message: "Stundentname and Department and password and PhoneNumber are required" });
+      return res.status(400).json({ message: "Stundentname and Department and password and PhoneNumber  are required" });
     }
  
     const student = await Stundent.create({

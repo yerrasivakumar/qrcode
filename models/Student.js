@@ -20,7 +20,7 @@ const StundentSchema = new mongoose.Schema({
   },
     Email: {
     type: String,
-    required: true
+    
   },
  
 
