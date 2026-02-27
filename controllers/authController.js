@@ -6,10 +6,12 @@ const IssueReturn = require("../models/IssueReturn");
 
 exports.Register = async (req, res) => {
   try {
-    const { name, password, role } = req.body;
+    const { name, role, Department,password,PhoneNumber,Email } = req.body;
 
-   
-    const existingUser = await User.findOne({ name });
+    if (!name || !Department || !password ||!PhoneNumber) {
+      return res.status(400).json({ message: "name and Department and password and phonenumber are required" });
+    }
+    const existingUser = await User.findOne({PhoneNumber});
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -18,10 +20,14 @@ exports.Register = async (req, res) => {
     const admin = await User.create({
       name,
       password,
-      role
+      role,
+      PhoneNumber,
+      Email,
+      Department
     });
 
-    return res.status(201).json({ message: "Admin registered successfully",
+    return res.status(201).json({ message: "registered successfully",
+      status : true,
       name: admin.name,
     });
 
@@ -34,9 +40,9 @@ exports.Register = async (req, res) => {
 
 exports.Login = async (req, res) => {
   try {
-    const { name, password } = req.body;
+    const { PhoneNumber, password } = req.body;
 
-    const user = await User.findOne({ name });
+    const user = await User.findOne({ PhoneNumber });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
@@ -48,7 +54,7 @@ exports.Login = async (req, res) => {
 
     res.status(200).json({
       message: "Login successful",
-      
+       status : true,
       user: {
         id: user._id,
         name: user.name,
@@ -57,7 +63,7 @@ exports.Login = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ status : false, message: "Server error", error });
   }
 };
 
@@ -141,53 +147,53 @@ const limit = parseInt(req.query.limit) || 5;
 
 
 
-exports.addStudent = async (req, res) => {
-  try {
-    const { name, Department,password,PhoneNumber,Email } = req.body;
+// exports.addStudent = async (req, res) => {
+//   try {
+//     const { name, Department,password,PhoneNumber,Email } = req.body;
 
-      const ph = await Stundent.findOne({ PhoneNumber })
-      if (ph) {
-  return res.status(400).json({
-    success: false,
-    message: "PhoneNumber already exists"
-  });
-}
-    if (!name || !Department || !password ||!PhoneNumber) {
-      return res.status(400).json({ message: "Stundentname and Department and password and PhoneNumber  are required" });
-    }
+//       const ph = await Stundent.findOne({ PhoneNumber })
+//       if (ph) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "PhoneNumber already exists"
+//   });
+// }
+//     if (!name || !Department || !password ||!PhoneNumber) {
+//       return res.status(400).json({ message: "Stundentname and Department and password and PhoneNumber  are required" });
+//     }
  
-    const student = await Stundent.create({
-      name,
-      Department,
-      password,PhoneNumber,Email
-    });
+//     const student = await Stundent.create({
+//       name,
+//       Department,
+//       password,PhoneNumber,Email
+//     });
 
-    res.status(201).json({
-      message: "Student added successfully",
-      student
-    });
+//     res.status(201).json({
+//       message: "Student added successfully",
+//       student
+//     });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
-exports.getStudents = async (req, res) => { 
-  try {
-    const students = await Stundent.find().select("-password");
+// exports.getStudents = async (req, res) => { 
+//   try {
+//     const students = await Stundent.find().select("-password");
 
-    res.status(200).json({
-      success: true,
-      count: students.length,
-      data: students
-    });
+//     res.status(200).json({
+//       success: true,
+//       count: students.length,
+//       data: students
+//     });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 exports.issueBook = async (req, res) => {
   try {

@@ -9,10 +9,22 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+   Department: {
+    type: String,
+    required: true
+  },
+  PhoneNumber: {
+    type: String,
+    required: true
+  },
+    Email: {
+    type: String,
+    
+  },
   role: {
     type: String,
-    enum: ["user", "admin"],
-    default: "user"
+    enum: ["stundent", "admin"],
+    default: "stundent"
   }
 },{ timestamps: true ,versionKey: false});
 
