@@ -179,21 +179,21 @@ const limit = parseInt(req.query.limit) || 5;
 //   }
 // };
 
-// exports.getStudents = async (req, res) => { 
-//   try {
-//     const students = await Stundent.find().select("-password");
+exports.getStudents = async (req, res) => { 
+  try {
+    const students = await User.find().select("-password");
 
-//     res.status(200).json({
-//       success: true,
-//       count: students.length,
-//       data: students
-//     });
+    res.status(200).json({
+      success: true,
+      count: students.length,
+      data: students
+    });
 
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 exports.issueBook = async (req, res) => {
   try {
