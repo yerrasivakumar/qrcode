@@ -3,7 +3,9 @@ const Book = require("../models/Book");
 
 const IssueReturn = require("../models/IssueReturn");
 
-
+const currentTime = new Date().toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata"
+});
 exports.Register = async (req, res) => {
   try {
     const { name, role, Department,password,PhoneNumber,Email } = req.body;
@@ -233,6 +235,7 @@ exports.issueBook = async (req, res) => {
     res.status(201).json({
       message: "Book issued successfully",
       issueRecord,
+      currentTime: currentTime,
       remainingStock: book.stock
     });
 
@@ -280,6 +283,7 @@ exports.returnBook = async (req, res) => {
     res.status(200).json({
       message: "Book returned successfully",
       issueRecord,
+       currentTime: currentTime,
       updatedStock: book.stock
     });
 
