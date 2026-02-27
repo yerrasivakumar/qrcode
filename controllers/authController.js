@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Book = require("../models/Book");
-const Stundent = require("../models/Student");
+
 const IssueReturn = require("../models/IssueReturn");
 
 
@@ -299,7 +299,7 @@ exports.getUserWithHistory = async (req, res) => {
    
 
     // ✅ get user (remove __v)
-    const user = await Stundent.findById(userId).select("-__v");
+    const user = await User.findById(userId).select("-__v");
 
     if (!user) {
       return res.status(404).json({
