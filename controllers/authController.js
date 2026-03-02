@@ -202,40 +202,64 @@ exports.issueBook = async (req, res) => {
     const { bookId, studentId, issueDate } = req.body;
 
     if (!bookId || !studentId || !issueDate) {
-      return res.status(400).json({ message: "bookId, studentId, and issueDate are required" });
+      return res.status(400).json({
+        message: "bookId, studentId, and issueDate are required"
+      });
     }
 
-      const parts = issueDate.split("-");
+    // convert DD-MM-YYYY to Date
+    const parts = issueDate.split("-");
     const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
 
     if (isNaN(formattedDate.getTime())) {
       return res.status(400).json({ message: "Invalid issueDate format" });
     }
+
     const book = await Book.findById(bookId);
+
     if (!book) {
       return res.status(400).json({ message: "Book not found" });
     }
 
-    if (book.stock <= 0) {
-      return res.status(400).json({ message: "Book out of stock" });
+    // prevent same book duplicate only
+    const sameBookIssue = await IssueReturn.findOne({
+      bookId,
+      studentId,
+      status: "issued"
+    });
+
+    if (sameBookIssue) {
+      return res.status(400).json({
+        message: "This book is already issued to the student"
+      });
     }
 
-    // Decrease stock
+    if (book.stock <= 0) {
+      return res.status(400).json({
+        message: "Book out of stock"
+      });
+    }
+
+    // decrease stock
     book.stock -= 1;
     await book.save();
 
-    // Create issue record
     const issueRecord = await IssueReturn.create({
       bookId,
       studentId,
-      issueDate,
-      status: "issued"
+      issueDate: formattedDate,
+      status: "issued",
+      issuedAt: new Date()
+    });
+
+    const issuedAtIST = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata"
     });
 
     res.status(201).json({
       message: "Book issued successfully",
       issueRecord,
-      currentTime: currentTime,
+      issuedAt: issuedAtIST,
       remainingStock: book.stock
     });
 
@@ -247,49 +271,72 @@ exports.issueBook = async (req, res) => {
 
 exports.returnBook = async (req, res) => {
   try {
+
     const { bookId, studentId, returnDate } = req.body;
 
+    if (!bookId || !studentId || !returnDate) {
+      return res.status(400).json({
+        message: "bookId, studentId, and returnDate are required"
+      });
+    }
 
-      const parts = returnDate.split("-");
+    const parts = returnDate.split("-");
     const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
 
     if (isNaN(formattedDate.getTime())) {
-      return res.status(400).json({ message: "Invalid returnDate format" });
-    }
-    if (!bookId || !studentId || !returnDate) {
-      return res.status(400).json({ message: "bookId, studentId, and returnDate are required" });
+      return res.status(400).json({
+        message: "Invalid returnDate format"
+      });
     }
 
     const book = await Book.findById(bookId);
+
     if (!book) {
-      return res.status(400).json({ message: "Book not found" });
+      return res.status(400).json({
+        message: "Book not found"
+      });
     }
 
-    // Increase stock
-    book.stock += 1;
-    await book.save();
-
-    // Update issue record
     const issueRecord = await IssueReturn.findOneAndUpdate(
-      { bookId, studentId, status: "issued" },
-      { returnDate, status: "returned" },
+      {
+        bookId,
+        studentId,
+        status: "issued"
+      },
+      {
+        returnDate: formattedDate,
+        returnedAt: new Date(),
+        status: "returned"
+      },
       { new: true }
     );
 
     if (!issueRecord) {
-      return res.status(400).json({ message: "No active issue record found for this book and student" });
+      return res.status(400).json({
+        message: "No active issue record found"
+      });
     }
+
+    // increase stock
+    book.stock += 1;
+    await book.save();
+
+    const returnedAtIST = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata"
+    });
 
     res.status(200).json({
       message: "Book returned successfully",
       issueRecord,
-       currentTime: currentTime,
+      returnedAt: returnedAtIST,
       updatedStock: book.stock
     });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Server error"
+    });
   }
 };
 
