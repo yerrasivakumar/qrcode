@@ -347,9 +347,6 @@ exports.getUserWithHistory = async (req, res) => {
   try {
     const userId = req.params.id;
 
-   
-
-    // ✅ get user (remove __v)
     const user = await User.findById(userId).select("-__v");
 
     if (!user) {
@@ -358,20 +355,29 @@ exports.getUserWithHistory = async (req, res) => {
       });
     }
 
-    // ✅ get history
     const userhistory = await IssueReturn.find({ studentId: userId })
       .populate("bookId", "title author image")
-      .select("bookId issueDate returnDate status")
+      .select("bookId issueDate returnDate returnedAt status createdAt")
       .sort({ createdAt: -1 });
 
-    // ✅ send response
+    // ✅ Format Time to IST
+    const formattedHistory = userhistory.map(record => ({
+      ...record.toObject(),
+      issueTime: record.createdAt
+        ? record.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+        : null,
+      returnTime: record.returnedAt
+        ? record.returnedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+        : null
+    }));
+
     return res.status(200).json({
       user,
-      history: userhistory
+      history: formattedHistory
     });
 
   } catch (err) {
-    console.error(err); // important
+    console.error(err);
     res.status(500).json({
       message: "Server error"
     });

@@ -19,6 +19,10 @@ const IssueReturnSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  
+  returnedAt: {
+    type: Date
+  },
   status: {
     type: String,
     enum: ["issued", "returned"],
