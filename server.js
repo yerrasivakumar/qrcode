@@ -107,7 +107,7 @@ app.post("/api/send-otp", async (req, res) => {
 
     return res.json({
       success: true,
-      otp, // ⚠️ remove in production
+      otp, 
       data: response.data,
     });
 
