@@ -41,7 +41,7 @@ app.post("/api/send-sms", async (req, res) => {
       "https://www.fast2sms.com/dev/bulkV2",
       {
         route: "q",
-        message: message,
+        message: ` Dear ${message}, The book is currently issued to you. Kindly return it at your earliest convenience.`,
         language: "english",
         flash: 0,
         numbers: number,
